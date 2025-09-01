@@ -21,55 +21,26 @@
         }
 
         /* === Texte ajouté === */
-/* === Texte stylisé === */
 #customText {
   position: absolute;
-  bottom: 5vh;
+  bottom: 5vh; /* ⇦ placé en bas de la page */
   left: 50%;
   transform: translateX(-50%);
   font-family: 'Apex New', sans-serif;
-  font-size: clamp(24px, 4vw, 48px);
-  font-weight: 700;
+  font-size: clamp(24px, 4vw, 48px); /* ⇦ taille entre 16px et 48px selon largeur écran */
+  font-weight: heavy;
   text-align: center;
-  color: #fff;
+  color: black;
   z-index: 2000;
-  line-height: 1.3;
-
-  /* --- Fond sophistiqué en arrondis --- */
-  background: linear-gradient(135deg, rgba(3, 169, 244, 0.85), rgba(63, 81, 181, 0.85));
-  backdrop-filter: blur(12px);
+  line-height: 1.2;
+  background-color: transparent;
   padding: 1em 2em;
-  border-radius: 2rem;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
-
-  /* --- Apparition en douceur --- */
-  opacity: 0;
-  transform: translate(-50%, 30px) scale(0.95);
-  animation: fadeSlideIn 1.2s ease-out forwards;
-  animation-delay: 0.5s; /* petit délai pour plus d'effet */
-
-  cursor: pointer;
-  transition: transform 0.3s ease-in-out;
+  border-radius: 0;
+  max-width: 90vw;
+  word-wrap: break-word;
+  cursor: pointer; /* Ajout pour indiquer que le texte est cliquable */
+  transition: font-size 0.3s ease-in-out; /* Ajout pour une transition douce */
 }
-
-/* Zoom doux au clic */
-#customText.zoomed {
-  font-size: clamp(36px, 6vw, 72px);
-  transform: translateX(-50%) scale(1.1);
-}
-
-/* Animation d'apparition */
-@keyframes fadeSlideIn {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, 30px) scale(0.95);
-  }
-  100% {
-    opacity: 1;
-    transform: translate(-50%, 0) scale(1);
-  }
-}
-
 
 /* Nouveau style pour le zoom */
 #customText.zoomed {
@@ -305,7 +276,7 @@
                 if (animationGroups) {
                     animationGroups.forEach(ag => ag.start(true));
                 }
-                mesh.scaling = new BABYLON.Vector3(20, 20, 20);
+                mesh.scaling = new BABYLON.Vector3(30, 30, 30);
 
                 const pivot = new BABYLON.TransformNode("pivot_" + index, scene);
                 mesh.position.z = radius;
