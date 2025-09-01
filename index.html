@@ -22,22 +22,25 @@
         }
 
         /* === Texte ajouté === */
-    #customText {
-            position: absolute;
-            top: 30px;   /* ⇦ ajuste verticalement */
-            left: 50%;   /* ⇦ ajuste horizontalement */
-            transform: translateX(-50%);
-            font-family: 'Apex New', sans-serif;
-            font-size: 48px;
-            font-weight: bold;
-            text-align: center;
-            color: black;
-            z-index: 2000;
-            line-height: 1.2;
-            background-color: rgba(255,255,255,0.6); /* optionnel */
-            padding: 10px 20px;
-            border-radius: 0px;
-        }
+#customText {
+  position: absolute;
+  bottom: 5vh; /* ⇦ placé en bas de la page */
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Apex New', sans-serif;
+  font-size: clamp(16px, 4vw, 48px); /* ⇦ taille entre 16px et 48px selon largeur écran */
+  font-weight: bold;
+  text-align: center;
+  color: black;
+  z-index: 2000;
+  line-height: 1.2;
+  background-color: transparent;
+  padding: 1em 2em;
+  border-radius: 0;
+  max-width: 90vw;
+  word-wrap: break-word;
+}
+
 
         /* === Styles pour le menu Hamburger === */
         #menu-container {
