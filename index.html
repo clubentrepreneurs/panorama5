@@ -4,13 +4,14 @@
     <meta charset="UTF-8" />
     <title>GLB + cercles + panorama + menu</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <link href="https://fonts.cdnfonts.com/css/apex-new" rel="stylesheet"> <!-- Import de la police ApexNew -->
     <style>
         html, body {
             margin: 0;
             overflow: hidden;
             height: 100%;
             touch-action: none;
-            background: none; /* Suppression de backgroundstatique.png */
+            background: none;
         }
         #renderCanvas {
             width: 100%;
@@ -20,12 +21,30 @@
             background-color: transparent !important;
         }
 
+        /* === Texte personnalisé === */
+        #customText {
+            position: absolute;
+            top: 30px;   /* Change la valeur pour déplacer verticalement */
+            left: 50%;   /* Centre horizontalement */
+            transform: translateX(-50%); /* Garde centré */
+            font-family: 'Apex New', sans-serif;
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            color: black;
+            z-index: 2000; /* Au-dessus de tout */
+            line-height: 1.2;
+            background-color: rgba(255,255,255,0.6); /* Optionnel : fond semi-transparent */
+            padding: 10px 20px;
+            border-radius: 8px;
+        }
+
         /* === Styles pour le menu Hamburger === */
         #menu-container {
             position: fixed;
             top: 20px;
             left: 20px;
-            z-index: 1001; /* Au-dessus de tous les autres éléments */
+            z-index: 1001;
         }
         #hamburger-button {
             width: 30px;
@@ -62,116 +81,16 @@
         #menu-overlay.open {
             transform: translateX(0);
         }
-        #menu-overlay h2 {
-            margin-top: 0;
-            color: #333;
-        }
-        #menu-overlay ul {
-            list-style: none;
-            padding: 0;
-        }
-        #menu-overlay li {
-            padding: 10px 0;
-            border-bottom: 1px solid #ddd;
-        }
-        #menu-overlay a {
-            text-decoration: none;
-            color: #555;
-            font-size: 16px;
-            display: block;
-        }
-        
-        /* === Cercles animés === */
-        .circleContainer {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            z-index: 20;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            pointer-events: auto;
-        }
-        .circle {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 2px solid red;
-            animation: pulse 2s infinite ease-in-out;
-        }
-        .circle::after {
-            content: "";
-            position: absolute;
-            width: 0%;
-            height: 0%;
-            border-radius: 50%;
-            border: 2px solid rgba(255, 0, 0, 0.7);
-            transform: scale(0);
-            animation: growFade 2s infinite ease-out;
-            animation-delay: 0.5s;
-        }
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-        @keyframes growFade {
-            0% { transform: scale(0); opacity: 0.7; }
-            100% { transform: scale(1.5); opacity: 0; }
-        }
-        
-        /* === Texte overlay sous le GLB === */
-        .text-overlay {
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            color: black;
-            background-color: rgba(255, 255, 255, 0.7);
-            padding: 2px 8px;
-            border-radius: 3px;
-            font-family: sans-serif;
-            font-size: 12px;
-            white-space: nowrap;
-            pointer-events: none;
-            margin-top: 5px;
-        }
-
-        /* === Vidéo responsive === */
-        #videoContainer {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80%; max-width: 800px;
-            aspect-ratio: 16/9;
-            display: none;
-            z-index: 100;
-            background: black;
-        }
-        #videoContainer iframe {
-            width: 100%; height: 100%;
-            border: none;
-        }
-        #closeButton {
-            position: absolute;
-            top: -40px; right: 0;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            cursor: pointer;
-            font-size: 16px;
-            z-index: 101;
-        }
     </style>
 </head>
 <body>
     <canvas id="renderCanvas"></canvas>
+
+    <!-- === Texte ajouté === -->
+    <div id="customText">
+        REUSSIR A L'UNIVERSITE :<br>
+        TOUTES LES VIDEOS
+    </div>
 
     <div id="menu-container">
         <button id="hamburger-button">
@@ -201,17 +120,13 @@
         const engine = new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true, alpha: true });
         const scene = new BABYLON.Scene(engine);
 
-        // Fond transparent (plus d'image CSS)
         scene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
 
-        // === Caméra ===
         const camera = new BABYLON.ArcRotateCamera("cam", Math.PI/2, Math.PI/2.5, 300, new BABYLON.Vector3(0,0,0), scene);
         camera.attachControl(canvas, true);
 
-        // === Lumière ===
         new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0,1,0), scene);
 
-        // === Dôme transparent ===
         const dome = new BABYLON.PhotoDome("panorama", "test6.png", { resolution: 32, size: 1000 }, scene);
         dome.imageMode = BABYLON.PhotoDome.MODE_MONOSCOPIC;
 
@@ -222,7 +137,6 @@
         domeMat.backFaceCulling = false;
         domeMat.needDepthPrePass = true;
 
-        // === Cercles + GLB ===
         const circleMap = new Map();
         function createCircle(id, text) {
             const container = document.createElement("div");
@@ -322,7 +236,6 @@
 
         window.addEventListener("resize", () => engine.resize());
 
-        // === Logique du menu Hamburger ===
         const hamburgerButton = document.getElementById('hamburger-button');
         const menuOverlay = document.getElementById('menu-overlay');
 
